@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,10 +7,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { Label } from "@/components/ui/label";
 
 const Login = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { signInWithGoogle } = useAuth();
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
@@ -87,9 +89,7 @@ const Login = () => {
                 <CardContent>
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium">
-                        E-mail
-                      </label>
+                      <Label htmlFor="email">E-mail</Label>
                       <Input
                         id="email"
                         type="email"
@@ -100,14 +100,7 @@ const Login = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label htmlFor="password" className="text-sm font-medium">
-                          Senha
-                        </label>
-                        <Link to="/recuperar-senha" className="text-sm text-smartcont-600 hover:underline">
-                          Esqueceu a senha?
-                        </Link>
-                      </div>
+                      <Label htmlFor="password">Senha</Label>
                       <Input
                         id="password"
                         type="password"
@@ -133,7 +126,7 @@ const Login = () => {
                   <Button 
                     variant="outline" 
                     className="w-full" 
-                    onClick={handleGoogleLogin} 
+                    onClick={signInWithGoogle} 
                     disabled={isLoading}
                   >
                     <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
@@ -224,7 +217,7 @@ const Login = () => {
                   <Button 
                     variant="outline" 
                     className="w-full" 
-                    onClick={handleGoogleLogin} 
+                    onClick={signInWithGoogle} 
                     disabled={isLoading}
                   >
                     <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
