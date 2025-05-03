@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,6 +7,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { toast } from "@/components/ui/use-toast";
 
 const Login = () => {
   const { signInWithGoogle } = useAuth();
@@ -45,6 +48,7 @@ const Login = () => {
                     </svg>
                     Entrar com Google
                   </Button>
+                  <LoginForm />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -54,13 +58,13 @@ const Login = () => {
                 <CardHeader>
                   <CardTitle>Criar conta</CardTitle>
                   <CardDescription>
-                    Crie sua conta usando sua conta Google.
+                    Crie sua conta usando sua conta Google ou e-mail.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button 
                     variant="outline" 
-                    className="w-full" 
+                    className="w-full mb-4" 
                     onClick={signInWithGoogle}
                   >
                     <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
@@ -71,6 +75,7 @@ const Login = () => {
                     </svg>
                     Cadastrar com Google
                   </Button>
+                  <CadastroForm />
                 </CardContent>
                 <CardFooter>
                   <p className="text-sm text-gray-500 text-center w-full">
@@ -81,8 +86,7 @@ const Login = () => {
                     e{" "}
                     <Link to="/privacidade" className="text-smartcont-600 hover:underline">
                       Política de Privacidade
-                    </Link>
-                    .
+                    </Link>.
                   </p>
                 </CardFooter>
               </Card>
@@ -95,5 +99,151 @@ const Login = () => {
     </div>
   );
 };
+
+function CadastroForm() {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (senha !== confirmarSenha) {
+      toast({ title: "Erro", description: "As senhas não coincidem.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, { displayName: nome });
+        await sendEmailVerification(auth.currentUser);
+      }
+      toast({
+        title: "Cadastro realizado!",
+        description: "Verifique seu e-mail para ativar sua conta.",
+        variant: "default"
+      });
+      setNome(""); setEmail(""); setSenha(""); setConfirmarSenha("");
+    } catch (error: any) {
+      toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <Input
+        placeholder="Nome completo"
+        value={nome}
+        onChange={e => setNome(e.target.value)}
+        required
+      />
+      <Input
+        type="email"
+        placeholder="E-mail"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+      />
+      <Input
+        type="password"
+        placeholder="Senha"
+        value={senha}
+        onChange={e => setSenha(e.target.value)}
+        required
+      />
+      <Input
+        type="password"
+        placeholder="Confirmar senha"
+        value={confirmarSenha}
+        onChange={e => setConfirmarSenha(e.target.value)}
+        required
+      />
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Cadastrando..." : "Cadastrar"}
+      </Button>
+    </form>
+  );
+}
+
+function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setShowResend(false);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      if (!userCredential.user.emailVerified) {
+        toast({
+          title: "E-mail não verificado",
+          description: "Verifique seu e-mail antes de acessar a plataforma. Se não recebeu, clique para reenviar.",
+          variant: "destructive"
+        });
+        setShowResend(true);
+        await auth.signOut();
+        setLoading(false);
+        return;
+      }
+      toast({ title: "Login realizado!", description: "Bem-vindo de volta!", variant: "default" });
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({ title: "Erro ao fazer login", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      if (auth.currentUser && !auth.currentUser.emailVerified) {
+        await sendEmailVerification(auth.currentUser);
+        toast({ title: "E-mail reenviado!", description: "Verifique sua caixa de entrada.", variant: "default" });
+      }
+      await auth.signOut();
+    } catch (error: any) {
+      toast({ title: "Erro ao reenviar e-mail", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <Input
+        type="email"
+        placeholder="E-mail"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+      />
+      <Input
+        type="password"
+        placeholder="Senha"
+        value={senha}
+        onChange={e => setSenha(e.target.value)}
+        required
+      />
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Entrando..." : "Entrar"}
+      </Button>
+      {showResend && (
+        <Button type="button" variant="outline" className="w-full" onClick={handleResend} disabled={loading}>
+          {loading ? "Reenviando..." : "Reenviar e-mail de verificação"}
+        </Button>
+      )}
+    </form>
+  );
+}
 
 export default Login;
