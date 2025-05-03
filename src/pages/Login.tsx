@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
-import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 
@@ -174,6 +174,7 @@ function LoginForm() {
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -218,6 +219,22 @@ function LoginForm() {
     }
   };
 
+  const handlePasswordReset = async () => {
+    if (!email) {
+      toast({ title: "Informe o e-mail", description: "Digite seu e-mail para redefinir a senha.", variant: "destructive" });
+      return;
+    }
+    setResetLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({ title: "E-mail enviado!", description: "Verifique sua caixa de entrada para redefinir a senha.", variant: "default" });
+    } catch (error: any) {
+      toast({ title: "Erro ao enviar e-mail", description: error.message, variant: "destructive" });
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <Input
@@ -237,6 +254,16 @@ function LoginForm() {
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Entrando..." : "Entrar"}
       </Button>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          className="text-sm text-smartcont-600 hover:underline focus:outline-none"
+          onClick={handlePasswordReset}
+          disabled={resetLoading}
+        >
+          {resetLoading ? "Enviando..." : "Esqueceu a senha?"}
+        </button>
+      </div>
       {showResend && (
         <Button type="button" variant="outline" className="w-full" onClick={handleResend} disabled={loading}>
           {loading ? "Reenviando..." : "Reenviar e-mail de verificação"}
