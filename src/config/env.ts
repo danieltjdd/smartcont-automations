@@ -6,7 +6,7 @@ export const env = {
   
   // URLs da API
   apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3000',
-  apiUrlProduction: import.meta.env.VITE_API_URL_PRODUCTION || 'https://api.seu-dominio.com',
+  apiUrlProduction: import.meta.env.VITE_API_URL_PRODUCTION || 'https://smartcont-automations.onrender.com',
   
   // Configurações de autenticação
   auth: {
