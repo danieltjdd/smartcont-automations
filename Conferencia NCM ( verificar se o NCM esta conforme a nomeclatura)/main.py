@@ -60,7 +60,7 @@ try:
     CAMINHO_PLANILHA_USUARIO = 'entrada/planilha_usuario.xlsx'
     CAMINHO_TABELA_NCM = 'entrada/Tabela_NCM_Vigente.xlsx'
     CAMINHO_SAIDA = 'saida/resultado_validado.xlsx'
-    OPENAI_API_KEY = '***REMOVED***proj-zCy2vtYcpOCQy9jflvXpDSHoCvpCM1eAXiMpriFgRdlXSQa1e1mMVkIV84LsDwfvECxrDZ2SyuT3BlbkFJrFt3CWkZ8CHLeTTGMYdHeKAUwHU_7aj8RsXuO1QX1X_PoVvVakziG6NuhWYp1oOvRmx11QV-0A'  # Substitua pelo seu token da OpenAI
+    OPENAI_API_KEY = 'OPENAI_API_KEY'  # Substitua pelo seu token da OpenAI
     MODELO = 'gpt-3.5-turbo'  # Alterado para usar o modelo mais econômico
     TAMANHO_LOTE = 10  # Número de itens por lote
     TEMPO_ESPERA = 21  # Tempo de espera em segundos entre as requisições
