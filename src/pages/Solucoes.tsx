@@ -45,10 +45,6 @@ const Solucoes = () => {
           <div className="mt-12 bg-smartcont-600 text-white rounded-lg p-8 text-center">
             <h2 className="text-2xl font-bold mb-4">📞 Fale com um consultor</h2>
             <p className="mb-2">Está pronto para transformar a contabilidade da sua empresa? Entre em contato conosco:</p>
-            <p className="mb-1"><b>Consultor:</b> Daniel Almeida da Mata</p>
-            <p className="mb-1"><b>Telefone:</b> <a href="https://wa.me/5562993111621" target="_blank" rel="noopener noreferrer" className="underline">(62) 99311-1621</a></p>
-            <p className="mb-1"><b>E-mail:</b> <a href="mailto:smartcont.online@gmail.com" className="underline">smartcont.online@gmail.com</a></p>
-            <p className="mb-4"><b>Endereço:</b> Anápolis - Goiás</p>
             <a href="https://wa.me/5562993111621" target="_blank" rel="noopener noreferrer">
               <button className="btn-primary bg-white text-smartcont-600 px-6 py-2 rounded font-semibold shadow hover:bg-smartcont-50 transition">Iniciar Conversa no WhatsApp</button>
             </a>

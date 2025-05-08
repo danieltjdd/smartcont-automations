@@ -40,7 +40,6 @@ const Footer: React.FC = () => {
             <ul className="space-y-2 text-smartcont-100">
               <li><Link to="/" className="hover:text-white">Início</Link></li>
               <li><Link to="/solucoes" className="hover:text-white">Soluções</Link></li>
-              <li><Link to="/precos" className="hover:text-white">Preços</Link></li>
               <li><Link to="/contato" className="hover:text-white">Contato</Link></li>
             </ul>
           </div>
