@@ -10,6 +10,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import Modulos from "./pages/Modulos";
 import Solucoes from "./pages/Solucoes";
+import Historico from "./pages/Historico";
+import Perfil from "./pages/Perfil";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/historico" element={<Historico />} />
+          <Route path="/dashboard/perfil" element={<Perfil />} />
           <Route path="/modulos" element={<Modulos />} />
           <Route path="/solucoes" element={<Solucoes />} />
           <Route path="/admin" element={<AdminDashboard />} />
