@@ -83,6 +83,8 @@ const Modulos = () => {
   const [relatorioDisponivel, setRelatorioDisponivel] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [uf, setUf] = useState<string>("");
+  const [tela, setTela] = useState<'modulos' | 'processamento'>("modulos");
+  const [moduloSelecionado, setModuloSelecionado] = useState<string | null>(null);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("[handleUpload] Arquivos selecionados:", e.target.files);
@@ -191,95 +193,132 @@ const Modulos = () => {
     }
   };
 
+  // Renderiza a tela de módulos disponíveis
+  const renderModulosDisponiveis = () => (
+    <div className="w-full">
+      <h2 className="text-2xl font-bold mb-6">Módulos disponíveis</h2>
+      <div className="flex gap-4 mb-6">
+        <Button
+          variant={moduloSelecionado === "ncm" ? "default" : "outline"}
+          onClick={() => setModuloSelecionado("ncm")}
+        >
+          Conferência de NCM
+        </Button>
+        <Button
+          variant={moduloSelecionado === "pis_cofins" ? "default" : "outline"}
+          onClick={() => setModuloSelecionado("pis_cofins")}
+        >
+          Tributação PIS/COFINS
+        </Button>
+      </div>
+      {moduloSelecionado === "ncm" && (
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h3 className="text-2xl font-semibold mb-1">Conferência de NCM</h3>
+          <p className="text-gray-600 mb-4">Verifique automaticamente a classificação fiscal dos produtos com base nas descrições.</p>
+          <p className="mb-4">Este módulo analisa a descrição dos produtos e sugere a classificação NCM correta, identificando possíveis inconsistências nos cadastros atuais.</p>
+          <div className="bg-gray-50 rounded p-4 mb-4">
+            <b>Como funciona:</b>
+            <ol className="list-decimal pl-5 mt-2">
+              <li>Faça upload de um arquivo com a lista de produtos.</li>
+              <li>O sistema processará automaticamente cada item.</li>
+              <li>Receba um relatório completo com sugestões e inconsistências.</li>
+              <li>Exporte os resultados em Excel ou PDF.</li>
+            </ol>
+          </div>
+          <Button onClick={() => { setTela("processamento"); setOpcao("ncm"); }}>Acessar módulo</Button>
+        </div>
+      )}
+      {moduloSelecionado === "pis_cofins" && (
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h3 className="text-2xl font-semibold mb-1">Tributação PIS/COFINS</h3>
+          <p className="text-gray-600 mb-4">Gere uma planilha com os CST de PIS e COFINS, auxiliando na conferência tributária dos produtos.</p>
+          <div className="bg-gray-50 rounded p-4 mb-4">
+            <b>Como funciona:</b>
+            <ol className="list-decimal pl-5 mt-2">
+              <li>Faça upload de um arquivo com os dados fiscais.</li>
+              <li>O sistema verificará automaticamente as alíquotas e bases de cálculo.</li>
+              <li>Receba um diagnóstico completo com inconsistências e recomendações.</li>
+              <li>Exporte um relatório detalhado para compartilhar com o cliente.</li>
+            </ol>
+          </div>
+          <Button onClick={() => { setTela("processamento"); setOpcao("pis_cofins"); }}>Acessar módulo</Button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <main className="flex-grow flex flex-col items-start justify-start py-10 px-8 max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-smartcont-700">Conferências por NCM e Tributações</h1>
-        <div className="flex flex-col gap-8 w-full">
-          {/* Baixar planilha modelo */}
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 text-base font-medium shadow-sm rounded-lg"
-              onMouseEnter={() => setShowPreview(true)}
-              onMouseLeave={() => setShowPreview(false)}
-              asChild
-            >
-              <a href={PLANILHA_MODELO_URL} download>
-                <Download className="w-5 h-5" /> Baixar Planilha Modelo
-              </a>
+        {tela === 'modulos' ? (
+          renderModulosDisponiveis()
+        ) : (
+          <div className="w-full">
+            <Button variant="outline" className="mb-6" onClick={() => { setTela('modulos'); setArquivo(null); setOpcao(null); setRelatorioDisponivel(false); }}>
+              ← Voltar para módulos disponíveis
             </Button>
-            {showPreview && <PlanilhaPreview />}
-          </div>
-
-          {/* Upload da planilha */}
-          <div className="flex flex-col gap-2 w-full max-w-lg">
-            <label className="font-semibold text-sm">Upload da Planilha do Cliente</label>
-            <input
-              type="file"
-              accept=".xlsx,.xls,.csv"
-              className="block w-full border border-gray-300 rounded px-3 py-2"
-              onChange={handleUpload}
-            />
-            <span className="text-xs text-gray-500">Faça upload da planilha preenchida conforme o modelo.</span>
-          </div>
-
-          {/* Opções de conferência */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-            {opcoesConferencia.map((op) => (
-              <div
-                key={op.value}
-                className={`bg-white rounded-xl shadow-md p-6 flex flex-col items-start border transition-all ${opcao === op.value ? "border-blue-500 ring-2 ring-blue-200" : "border-transparent"}`}
-              >
-                <button
-                  className="flex items-center text-lg font-semibold mb-2 w-full hover:text-blue-700 focus:outline-none"
-                  onClick={() => {
-                    console.log("[onClick Opção] Opção selecionada:", op.value);
-                    setOpcao(op.value);
-                  }}
+            <h1 className="text-3xl font-bold mb-6 text-smartcont-700">
+              {opcao === 'ncm' ? 'Conferência de NCM' : 'Tributação PIS/COFINS'}
+            </h1>
+            <div className="flex flex-col gap-8 w-full">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 text-base font-medium shadow-sm rounded-lg"
+                  onMouseEnter={() => setShowPreview(true)}
+                  onMouseLeave={() => setShowPreview(false)}
+                  asChild
+                >
+                  <a href={PLANILHA_MODELO_URL} download>
+                    <Download className="w-5 h-5" /> Baixar Planilha Modelo
+                  </a>
+                </Button>
+                {showPreview && <PlanilhaPreview />}
+              </div>
+              <div className="flex flex-col gap-2 w-full max-w-lg">
+                <label className="font-semibold text-sm">Upload da Planilha do Cliente</label>
+                <input
+                  type="file"
+                  accept=".xlsx,.xls,.csv"
+                  className="block w-full border border-gray-300 rounded px-3 py-2"
+                  onChange={handleUpload}
+                />
+                <span className="text-xs text-gray-500">Faça upload da planilha preenchida conforme o modelo.</span>
+              </div>
+              {opcao === 'produto_st' && (
+                <div className="flex items-center gap-2 mt-2">
+                  <MapPin className="w-4 h-4 text-blue-500" />
+                  <select
+                    className="border border-gray-300 rounded px-2 py-1 text-sm"
+                    value={uf}
+                    onChange={e => setUf(e.target.value)}
+                  >
+                    <option value="">Selecione o Estado (UF)</option>
+                    {UFS.map((uf) => (
+                      <option key={uf} value={uf}>{uf}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              {arquivo && opcao && (opcao !== "produto_st" || (opcao === "produto_st" && uf)) && !relatorioDisponivel && (
+                <Button
+                  className="mt-4"
+                  onClick={handleProcessar}
                   disabled={processando}
                 >
-                  {op.icon} {op.label}
-                </button>
-                <span className="text-sm text-gray-600 mb-2 block">{op.desc}</span>
-                {op.value === "produto_st" && opcao === "produto_st" && (
-                  <div className="flex items-center gap-2 mt-2">
-                    <MapPin className="w-4 h-4 text-blue-500" />
-                    <select
-                      className="border border-gray-300 rounded px-2 py-1 text-sm"
-                      value={uf}
-                      onChange={e => setUf(e.target.value)}
-                    >
-                      <option value="">Selecione o Estado (UF)</option>
-                      {UFS.map((uf) => (
-                        <option key={uf} value={uf}>{uf}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Botão de processar e download do relatório */}
-          {arquivo && opcao && (opcao !== "produto_st" || (opcao === "produto_st" && uf)) && !relatorioDisponivel && (
-            <Button
-              className="mt-4"
-              onClick={handleProcessar}
-              disabled={processando}
-            >
-              {processando ? "Processando..." : "Processar e Gerar Relatório"}
-            </Button>
-          )}
-          {relatorioDisponivel && (
-            <div className="mt-4 text-left">
-              <p className="mb-2 text-green-700 font-semibold">Conferência realizada com sucesso! Faça o download do seu relatório abaixo.</p>
-              {/* O botão de download real é criado dinamicamente em handleProcessar */}
-              {/* Este é apenas um placeholder visual se necessário, mas a lógica de download está no handleProcessar */}
+                  {processando ? "Processando..." : "Processar e Gerar Relatório"}
+                </Button>
+              )}
+              {relatorioDisponivel && (
+                <div className="mt-4 text-left">
+                  <p className="mb-2 text-green-700 font-semibold">Conferência realizada com sucesso! Faça o download do seu relatório abaixo.</p>
+                  {/* O botão de download real é criado dinamicamente em handleProcessar */}
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
       {/* Rodapé compacto */}
       <footer className="w-full bg-gray-100 border-t border-gray-200 py-2 px-8 flex justify-between items-center text-xs text-gray-600">
