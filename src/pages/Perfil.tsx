@@ -15,14 +15,28 @@ const mockUser = {
 const Perfil = () => {
   const [form, setForm] = useState({ ...mockUser });
   const [editando, setEditando] = useState(false);
+  const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setEditando(false);
+    setForm((prev) => ({ ...prev, avatar: previewAvatar || prev.avatar }));
+    setPreviewAvatar(null);
     // Aqui você pode integrar com backend futuramente
     alert("Dados salvos com sucesso!");
   };
@@ -35,13 +49,21 @@ const Perfil = () => {
         <form onSubmit={handleSave} className="bg-white rounded-lg shadow p-8 flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <img
-              src={form.avatar}
+              src={previewAvatar || form.avatar}
               alt="Avatar"
               className="w-24 h-24 rounded-full border-4 border-smartcont-600 object-cover"
             />
-            <Button type="button" variant="outline" className="mt-2" disabled>
-              Alterar foto (em breve)
-            </Button>
+            {editando && (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="mt-2"
+                />
+                <span className="text-xs text-gray-500">Selecione uma imagem do seu computador</span>
+              </>
+            )}
           </div>
           <div className="flex gap-4">
             <div className="flex-1">

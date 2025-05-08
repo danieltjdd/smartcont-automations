@@ -48,6 +48,9 @@ const mockHistorico = [
   },
 ];
 
+const ncmConsultas = mockHistorico.filter(item => item.tipo === "NCM").length;
+const pisCofinsConsultas = mockHistorico.filter(item => item.tipo === "PIS/COFINS").length;
+
 const Historico = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -68,7 +71,7 @@ const Historico = () => {
               <CardTitle>Consultas NCM</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-smartcont-600">{mockUser.ncmConsultas}</p>
+              <p className="text-3xl font-bold text-smartcont-600">{ncmConsultas}</p>
             </CardContent>
           </Card>
           <Card>
@@ -76,7 +79,7 @@ const Historico = () => {
               <CardTitle>Consultas PIS/COFINS</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-smartcont-600">{mockUser.pisCofinsConsultas}</p>
+              <p className="text-3xl font-bold text-smartcont-600">{pisCofinsConsultas}</p>
             </CardContent>
           </Card>
         </div>
@@ -102,7 +105,7 @@ const Historico = () => {
                   <TableCell>{item.descricao}</TableCell>
                   <TableCell>{item.creditos}</TableCell>
                   <TableCell>
-                    <Badge variant={item.status === "Sucesso" ? "success" : "destructive"}>{item.status}</Badge>
+                    <Badge variant={item.status === "Sucesso" ? "default" : "destructive"}>{item.status}</Badge>
                   </TableCell>
                 </TableRow>
               ))}
