@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import { Download, FileSpreadsheet, FileSearch, ShieldCheck, MapPin } from "lucide-react";
+import { env } from "@/config/env";
 
 const PLANILHA_MODELO_URL = "/planilha-modelo.xlsx";
 const UFS = [
@@ -84,19 +85,110 @@ const Modulos = () => {
   const [uf, setUf] = useState<string>("");
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("[handleUpload] Arquivos selecionados:", e.target.files);
     if (e.target.files && e.target.files[0]) {
       setArquivo(e.target.files[0]);
       setRelatorioDisponivel(false);
-      setOpcao(null);
+      // Não resetar a opção aqui, o usuário pode querer manter a opção e trocar o arquivo
+      // setOpcao(null); 
+      console.log("[handleUpload] Estado 'arquivo' definido:", e.target.files[0]);
     }
   };
 
-  const handleProcessar = () => {
+  const handleProcessar = async () => {
+    console.log("[handleProcessar] Iniciando processamento...");
+    console.log("[handleProcessar] Estado atual - Arquivo:", arquivo);
+    console.log("[handleProcessar] Estado atual - Opcao:", opcao);
+
+    if (!arquivo || !opcao) {
+      console.error("[handleProcessar] ERRO: Arquivo ou opção não selecionados. Saindo.", { arquivo, opcao });
+      alert("Por favor, selecione um arquivo e uma opção de conferência antes de processar.");
+      return;
+    }
+
     setProcessando(true);
-    setTimeout(() => {
+    setRelatorioDisponivel(false);
+    console.log("[handleProcessar] Estado 'processando' definido como true.");
+
+    const formData = new FormData();
+    formData.append("usuario", arquivo);
+    console.log("[handleProcessar] FormData criado e arquivo adicionado:", arquivo.name);
+
+    let endpoint = "";
+    const isProd = env.isProduction();
+    const appEnvValue = env.appEnv;
+    const apiUrl = env.getApiUrl();
+
+    console.log("[handleProcessar] Checando ambiente - env.isProduction():", isProd);
+    console.log("[handleProcessar] Checando ambiente - env.appEnv (usado por isProduction):", appEnvValue);
+    console.log("[handleProcessar] URL da API obtida (env.getApiUrl()):", apiUrl);
+
+    if (opcao === "pis_cofins") {
+      endpoint = `${apiUrl}/processar-pis-cofins/`;
+    } else if (opcao === "ncm") {
+      endpoint = `${apiUrl}/processar-ncm/`;
+    }
+    
+    console.log("[handleProcessar] Opção selecionada:", opcao);
+    console.log("[handleProcessar] Endpoint determinado:", endpoint);
+
+    if (!endpoint || !apiUrl || (isProd && apiUrl.includes('localhost'))) {
+      console.error("[handleProcessar] ERRO: Endpoint não pôde ser determinado ou URL da API inválida para o ambiente. Saindo.", { opcao, apiUrl, isProd, endpoint });
+      alert(`Erro ao determinar o endereço da API (${apiUrl}). Verifique as variáveis de ambiente (VITE_APP_ENV deve ser 'production', e VITE_API_URL_PRODUCTION deve ser a URL correta).`);
       setProcessando(false);
-      setRelatorioDisponivel(true);
-    }, 2000); // Simula processamento
+      return;
+    }
+
+    console.log(`[handleProcessar] Tentando chamar o endpoint: ${endpoint} com método POST`);
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: formData,
+      });
+      console.log("[handleProcessar] Resposta recebida do fetch. Status:", response.status, "Ok:", response.ok);
+
+      if (response.ok) {
+        console.log("[handleProcessar] Resposta OK. Processando blob...");
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const disposition = response.headers.get('content-disposition');
+        let filename = 'relatorio.xlsx'; 
+        console.log("[handleProcessar] Content-Disposition header:", disposition);
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+          const filenameRegex = /filename[^;=\n]*=((["']).*?\2|[^;\n]*)/;
+          const matches = filenameRegex.exec(disposition);
+          if (matches != null && matches[1]) {
+            filename = matches[1].replace(/["']/g, '');
+            console.log("[handleProcessar] Nome do arquivo extraído do header:", filename);
+          }
+        }
+        a.download = filename;
+        console.log("[handleProcessar] Iniciando download do arquivo:", filename);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        setRelatorioDisponivel(true);
+        console.log("[handleProcessar] Download concluído e 'relatorioDisponivel' definido como true.");
+      } else {
+        const errorText = await response.text();
+        console.error("[handleProcessar] ERRO na API - Status:", response.status, "Resposta:", errorText);
+        try {
+            const errorData = JSON.parse(errorText);
+            alert(`Erro ao processar arquivo (${response.status}): ${errorData.erro || errorData.detail || response.statusText}`);
+        } catch (e) {
+            alert(`Erro ao processar arquivo (${response.status}): ${response.statusText}. Detalhes: ${errorText.substring(0, 300)}`);
+        }
+      }
+    } catch (error) {
+      console.error("[handleProcessar] ERRO CATCH na requisição:", error);
+      alert(`Erro crítico na requisição: ${error.message || error}`);
+    } finally {
+      setProcessando(false);
+      console.log("[handleProcessar] Estado 'processando' definido como false. Finalizando handleProcessar.");
+    }
   };
 
   return (
@@ -142,7 +234,10 @@ const Modulos = () => {
               >
                 <button
                   className="flex items-center text-lg font-semibold mb-2 w-full hover:text-blue-700 focus:outline-none"
-                  onClick={() => setOpcao(op.value)}
+                  onClick={() => {
+                    console.log("[onClick Opção] Opção selecionada:", op.value);
+                    setOpcao(op.value);
+                  }}
                   disabled={processando}
                 >
                   {op.icon} {op.label}
@@ -180,14 +275,8 @@ const Modulos = () => {
           {relatorioDisponivel && (
             <div className="mt-4 text-left">
               <p className="mb-2 text-green-700 font-semibold">Conferência realizada com sucesso! Faça o download do seu relatório abaixo.</p>
-              <div className="flex gap-2">
-                <Button asChild variant="outline">
-                  <a href="/relatorio-exemplo.xlsx" download>📊 Baixar Relatório Excel</a>
-                </Button>
-                <Button asChild variant="outline">
-                  <a href="/relatorio-exemplo.pdf" download>📄 Baixar Relatório PDF</a>
-                </Button>
-              </div>
+              {/* O botão de download real é criado dinamicamente em handleProcessar */}
+              {/* Este é apenas um placeholder visual se necessário, mas a lógica de download está no handleProcessar */}
             </div>
           )}
         </div>
@@ -201,4 +290,5 @@ const Modulos = () => {
   );
 };
 
-export default Modulos; 
+export default Modulos;
+
