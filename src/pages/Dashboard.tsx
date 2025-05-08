@@ -5,19 +5,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 
+// Simulação de contexto de autenticação
+const mockAuthUser = {
+  name: "Daniel Almeida",
+  company: "Contábil Exemplo Ltda",
+  role: "cliente"
+};
+
 const Dashboard = () => {
   const { toast } = useToast();
   const [activeModule, setActiveModule] = useState<string | null>(null);
 
   // Mock user data
   const user = {
-    name: "João Silva",
-    company: "Contábil Exemplo Ltda",
-    role: "cliente",
+    name: mockAuthUser.name,
+    company: mockAuthUser.company,
+    role: mockAuthUser.role,
     usageStats: {
       ncmVerifications: 3,
       pisConfinsChecks: 2,
-      remainingFreeUsage: 5
+      totalCredits: 200 // Valor fixo
     }
   };
 
@@ -139,11 +146,11 @@ const Dashboard = () => {
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Usos gratuitos restantes</CardTitle>
+                <CardTitle className="text-lg">Total de créditos</CardTitle>
                 <CardDescription>Plano básico</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-smartcont-600">{user.usageStats.remainingFreeUsage}</p>
+                <p className="text-3xl font-bold text-smartcont-600">{user.usageStats.totalCredits}</p>
               </CardContent>
             </Card>
           </div>
