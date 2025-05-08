@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -25,12 +24,9 @@ const Header: React.FC = () => {
           <Link to="/solucoes" className="text-gray-600 hover:text-smartcont-600 font-medium">
             Soluções
           </Link>
-          <Link to="/precos" className="text-gray-600 hover:text-smartcont-600 font-medium">
-            Preços
-          </Link>
-          <Link to="/contato" className="text-gray-600 hover:text-smartcont-600 font-medium">
+          <a href="https://wa.me/5562993111621" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-smartcont-600 font-medium">
             Contato
-          </Link>
+          </a>
           <Link to="/login">
             <Button className="btn-primary">Entrar</Button>
           </Link>
@@ -63,20 +59,15 @@ const Header: React.FC = () => {
             >
               Soluções
             </Link>
-            <Link 
-              to="/precos" 
-              className="text-gray-600 hover:text-smartcont-600 font-medium"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Preços
-            </Link>
-            <Link 
-              to="/contato" 
+            <a 
+              href="https://wa.me/5562993111621" 
+              target="_blank" 
+              rel="noopener noreferrer" 
               className="text-gray-600 hover:text-smartcont-600 font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
               Contato
-            </Link>
+            </a>
             <Link 
               to="/login" 
               onClick={() => setMobileMenuOpen(false)}
