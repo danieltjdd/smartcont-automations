@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -68,27 +67,22 @@ const Index = () => {
         <section className="bg-gray-50">
           <div className="container-custom section">
             <div className="text-center mb-16">
-              <h2 className="heading-2 mb-4">Enfrenta esses desafios no seu escritório?</h2>
+              <h2 className="heading-2 mb-4">Nossas Soluções</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Sabemos as dores que os escritórios contábeis enfrentam diariamente. Nossas soluções foram desenvolvidas para resolver problemas reais.
+                Na SmartCont, transformamos a contabilidade tradicional em uma experiência digital e eficiente. Utilizamos tecnologia de ponta para otimizar processos contábeis, reduzindo retrabalho e aumentando a produtividade. <br /><br />
+                <b>Principais soluções:</b>
+                <ul className="list-disc list-inside text-left mt-4">
+                  <li>🔄 Automação de Processos Contábeis</li>
+                  <li>☁️ Integração com Sistemas Contábeis</li>
+                  <li>🧠 Consultoria em Processos Contábeis</li>
+                  <li>🔐 Segurança e Conformidade</li>
+                </ul>
               </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {challenges.map((challenge, index) => (
-                <div 
-                  key={index} 
-                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-100"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <h3 className="text-xl font-semibold text-smartcont-600 mb-3">{challenge.problem}</h3>
-                  <p className="text-gray-600 mb-4">{challenge.description}</p>
-                  <div className="flex items-center text-smartcont-600 font-medium">
-                    <CheckCheck className="h-5 w-5 mr-2" />
-                    <span>Temos a solução</span>
-                  </div>
-                </div>
-              ))}
+              <div className="mt-8">
+                <Link to="/solucoes">
+                  <Button className="btn-primary">Conheça todas as soluções</Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -181,7 +175,7 @@ const Index = () => {
                   Criar conta gratuita
                 </Button>
               </Link>
-              <Link to="/contato">
+              <Link to="/contato" onClick={e => {e.preventDefault(); window.open('https://wa.me/5562993111621', '_blank');}}>
                 <Button className="btn-secondary bg-transparent text-white border-white hover:bg-smartcont-500">
                   Falar com consultor
                 </Button>
