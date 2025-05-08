@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CheckCheck } from "lucide-react";
-import SolucoesModal from "@/components/SolucoesModal";
 
 const Index = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -31,12 +28,11 @@ const Index = () => {
                       Começar agora
                     </Button>
                   </Link>
-                  <Button
-                    className="btn-secondary bg-transparent text-white border-white hover:bg-smartcont-500"
-                    onClick={() => setModalOpen(true)}
-                  >
-                    Nossas soluções
-                  </Button>
+                  <Link to="/solucoes">
+                    <Button className="btn-secondary bg-transparent text-white border-white hover:bg-smartcont-500">
+                      Nossas soluções
+                    </Button>
+                  </Link>
                 </div>
               </div>
               <div className="md:w-1/2 flex justify-center">
@@ -199,7 +195,6 @@ const Index = () => {
       </main>
 
       <Footer />
-      <SolucoesModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 };
