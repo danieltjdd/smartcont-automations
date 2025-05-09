@@ -19,20 +19,22 @@ const Perfil = () => {
   });
   const [editando, setEditando] = useState(false);
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
+  const [formOriginal, setFormOriginal] = useState(form); // Para restaurar ao cancelar
 
   useEffect(() => {
     if (user) {
       // Gera avatar baseado no email do usuário
       const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || '')}&background=4F46E5&color=fff&size=128`;
-      
-      setForm({
+      const novoForm = {
         avatar: user.photoURL || avatarUrl,
         nome: user.displayName?.split(' ')[0] || '',
         sobrenome: user.displayName?.split(' ').slice(1).join(' ') || '',
         email: user.email || '',
         endereco: '',
         telefone: ''
-      });
+      };
+      setForm(novoForm);
+      setFormOriginal(novoForm);
     }
   }, [user]);
 
@@ -78,6 +80,17 @@ const Perfil = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleEdit = () => {
+    setFormOriginal(form); // Salva estado original para cancelar
+    setEditando(true);
+  };
+
+  const handleCancel = () => {
+    setForm(formOriginal); // Restaura estado original
+    setEditando(false);
+    setPreviewAvatar(null);
   };
 
   if (!user) {
@@ -181,13 +194,13 @@ const Perfil = () => {
           </div>
           <div className="flex justify-end gap-4 mt-4">
             {!editando ? (
-              <Button type="button" onClick={() => setEditando(true)}>
+              <Button type="button" onClick={handleEdit}>
                 Editar perfil
               </Button>
             ) : (
               <>
                 <Button type="submit" className="btn-primary">Salvar</Button>
-                <Button type="button" variant="outline" onClick={() => { setEditando(false); }}>
+                <Button type="button" variant="outline" onClick={handleCancel}>
                   Cancelar
                 </Button>
               </>
