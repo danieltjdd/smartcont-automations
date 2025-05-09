@@ -1,21 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-
-const mockUser = {
-  avatar: "https://ui-avatars.com/api/?name=Daniel+Almeida&background=4F46E5&color=fff&size=128",
-  nome: "Daniel",
-  sobrenome: "Almeida",
-  email: "smartcont.online@gmail.com",
-  endereco: "Anápolis - Goiás",
-  telefone: "(62) 99311-1621"
-};
+import { useAuth } from "@/hooks/useAuth";
+import { updateProfile } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { toast } from "@/components/ui/use-toast";
 
 const Perfil = () => {
-  const [form, setForm] = useState({ ...mockUser });
+  const { user } = useAuth();
+  const [form, setForm] = useState({
+    avatar: "",
+    nome: "",
+    sobrenome: "",
+    email: "",
+    endereco: "",
+    telefone: ""
+  });
   const [editando, setEditando] = useState(false);
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      // Gera avatar baseado no email do usuário
+      const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || '')}&background=4F46E5&color=fff&size=128`;
+      
+      setForm({
+        avatar: user.photoURL || avatarUrl,
+        nome: user.displayName?.split(' ')[0] || '',
+        sobrenome: user.displayName?.split(' ').slice(1).join(' ') || '',
+        email: user.email || '',
+        endereco: '',
+        telefone: ''
+      });
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -32,14 +51,49 @@ const Perfil = () => {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEditando(false);
-    setForm((prev) => ({ ...prev, avatar: previewAvatar || prev.avatar }));
-    setPreviewAvatar(null);
-    // Aqui você pode integrar com backend futuramente
-    alert("Dados salvos com sucesso!");
+    if (!user) return;
+
+    try {
+      // Atualiza o perfil no Firebase
+      await updateProfile(user, {
+        displayName: `${form.nome} ${form.sobrenome}`.trim(),
+        photoURL: previewAvatar || form.avatar
+      });
+
+      setEditando(false);
+      setForm((prev) => ({ ...prev, avatar: previewAvatar || prev.avatar }));
+      setPreviewAvatar(null);
+      
+      toast({
+        title: "Sucesso",
+        description: "Dados salvos com sucesso!",
+        variant: "default"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao salvar dados",
+        variant: "destructive"
+      });
+    }
   };
+
+  if (!user) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <Header />
+        <main className="flex-grow py-10 px-4 max-w-xl mx-auto w-full">
+          <h1 className="text-3xl font-bold mb-8 text-smartcont-700">Meu Perfil</h1>
+          <div className="bg-white rounded-lg shadow p-8">
+            <p className="text-center text-gray-600">Por favor, faça login para acessar seu perfil.</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -99,7 +153,7 @@ const Perfil = () => {
               value={form.email}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded px-3 py-2"
-              disabled={!editando}
+              disabled={true}
               required
             />
           </div>
@@ -133,7 +187,7 @@ const Perfil = () => {
             ) : (
               <>
                 <Button type="submit" className="btn-primary">Salvar</Button>
-                <Button type="button" variant="outline" onClick={() => { setForm({ ...mockUser }); setEditando(false); }}>
+                <Button type="button" variant="outline" onClick={() => { setEditando(false); }}>
                   Cancelar
                 </Button>
               </>
