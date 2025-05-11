@@ -4,29 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-
-// Simulação de contexto de autenticação
-const mockAuthUser = {
-  name: "Daniel Almeida",
-  company: "Contábil Exemplo Ltda",
-  role: "cliente"
-};
+import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
   const { toast } = useToast();
   const [activeModule, setActiveModule] = useState<string | null>(null);
+  const { user, loading } = useAuth();
 
-  // Mock user data
-  const user = {
-    name: mockAuthUser.name,
-    company: mockAuthUser.company,
-    role: mockAuthUser.role,
-    usageStats: {
-      ncmVerifications: 3,
-      pisConfinsChecks: 2,
-      totalCredits: 200 // Valor fixo
-    }
-  };
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+  if (!user) {
+    return <div>Usuário não autenticado</div>;
+  }
+
+  const nome = user.displayName || user.email || "Usuário";
 
   const handleModuleSelection = (moduleId: string) => {
     setActiveModule(moduleId);
@@ -103,7 +95,7 @@ const Dashboard = () => {
             <h1 className="text-xl font-semibold text-smartcont-600">Dashboard</h1>
             <div className="flex items-center">
               <span className="mr-3 text-sm text-gray-600">
-                {user.name} - {user.company}
+                {nome}
               </span>
               <Button variant="ghost" size="sm" className="text-gray-600">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
@@ -118,7 +110,7 @@ const Dashboard = () => {
         <main className="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6">
           {/* Welcome section */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Bem-vindo, {user.name}!</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Bem-vindo, {nome}!</h2>
             <p className="text-gray-600">
               Acesse os módulos disponíveis para otimizar seus processos contábeis.
             </p>
