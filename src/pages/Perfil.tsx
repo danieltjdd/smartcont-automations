@@ -113,6 +113,13 @@ const Perfil = () => {
       <Header />
       <main className="flex-grow py-10 px-4 max-w-xl mx-auto w-full">
         <h1 className="text-3xl font-bold mb-8 text-smartcont-700">Meu Perfil</h1>
+        {!editando && (
+          <div className="flex justify-end mb-4">
+            <Button type="button" onClick={handleEdit}>
+              Editar perfil
+            </Button>
+          </div>
+        )}
         <form onSubmit={handleSave} className="bg-white rounded-lg shadow p-8 flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <img
@@ -193,11 +200,7 @@ const Perfil = () => {
             />
           </div>
           <div className="flex justify-end gap-4 mt-4">
-            {!editando ? (
-              <Button type="button" onClick={handleEdit}>
-                Editar perfil
-              </Button>
-            ) : (
+            {editando && (
               <>
                 <Button type="submit" className="btn-primary">Salvar</Button>
                 <Button type="button" variant="outline" onClick={handleCancel}>
