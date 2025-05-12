@@ -4,14 +4,7 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-
-// Mock de dados de uso
-const mockUser = {
-  name: "Daniel Almeida",
-  totalCredits: 200,
-  ncmConsultas: 3,
-  pisCofinsConsultas: 2,
-};
+import { useAuth } from "@/hooks/useAuth";
 
 const mockHistorico = [
   {
@@ -52,18 +45,22 @@ const ncmConsultas = mockHistorico.filter(item => item.tipo === "NCM").length;
 const pisCofinsConsultas = mockHistorico.filter(item => item.tipo === "PIS/COFINS").length;
 
 const Historico = () => {
+  const { user } = useAuth();
+  const nome = user?.displayName || user?.email || "Usuário";
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <main className="flex-grow py-10 px-4 max-w-5xl mx-auto w-full">
         <h1 className="text-3xl font-bold mb-8 text-smartcont-700">Histórico de Uso</h1>
+        <div className="mb-4 text-right text-gray-600 font-medium">{nome}</div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader>
               <CardTitle>Total de créditos</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-smartcont-600">{mockUser.totalCredits}</p>
+              <p className="text-3xl font-bold text-smartcont-600">200</p>
             </CardContent>
           </Card>
           <Card>

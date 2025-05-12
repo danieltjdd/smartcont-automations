@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { Menu, X } from "lucide-react";
 
 const Dashboard = () => {
   const { toast } = useToast();
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const { user, loading } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (loading) {
     return <div>Carregando...</div>;
@@ -94,9 +96,11 @@ const Dashboard = () => {
           <div className="flex justify-between items-center h-16 px-4 sm:px-6">
             <h1 className="text-xl font-semibold text-smartcont-600">Dashboard</h1>
             <div className="flex items-center">
-              <span className="mr-3 text-sm text-gray-600">
-                {nome}
-              </span>
+              {/* Botão menu mobile */}
+              <button className="md:hidden mr-2 text-gray-600" onClick={() => setMobileMenuOpen(true)}>
+                <Menu size={28} />
+              </button>
+              <span className="mr-3 text-sm text-gray-600">{nome}</span>
               <Button variant="ghost" size="sm" className="text-gray-600">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -105,6 +109,29 @@ const Dashboard = () => {
             </div>
           </div>
         </header>
+
+        {/* Drawer mobile */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex md:hidden">
+            <div className="bg-white w-64 h-full shadow-lg flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b">
+                <span className="font-bold text-lg text-smartcont-600">Menu</span>
+                <button onClick={() => setMobileMenuOpen(false)}>
+                  <X size={28} />
+                </button>
+              </div>
+              <nav className="flex-1 flex flex-col gap-2 p-4">
+                <Link to="/dashboard" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
+                <Link to="/modulos" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Módulos</Link>
+                <Link to="/dashboard/historico" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Histórico</Link>
+                <Link to="/dashboard/perfil" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Perfil</Link>
+                <Link to="/dashboard/suporte" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Suporte</Link>
+                <Button variant="secondary" className="mt-4 w-full" onClick={() => {/* lógica de logout */ setMobileMenuOpen(false);}}>Sair</Button>
+              </nav>
+            </div>
+            <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
+          </div>
+        )}
 
         {/* Dashboard content */}
         <main className="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6">
