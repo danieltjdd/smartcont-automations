@@ -266,15 +266,21 @@ const Modulos = () => {
                 <Button
                   variant="outline"
                   className="flex items-center gap-2 text-base font-medium shadow-sm rounded-lg"
-                  onMouseEnter={() => setShowPreview(true)}
-                  onMouseLeave={() => setShowPreview(false)}
                   asChild
                 >
                   <a href={PLANILHA_MODELO_URL} download>
                     <Download className="w-5 h-5" /> Baixar Planilha Modelo
                   </a>
                 </Button>
-                {showPreview && <PlanilhaPreview />}
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 text-base font-medium shadow-sm rounded-lg"
+                  asChild
+                >
+                  <a href={PLANILHA_MODELO_URL} target="_blank" rel="noopener noreferrer">
+                    Pré-visualizar Planilha
+                  </a>
+                </Button>
               </div>
               <div className="flex flex-col gap-2 w-full max-w-lg">
                 <label className="font-semibold text-sm">Upload da Planilha do Cliente</label>
