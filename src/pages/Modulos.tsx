@@ -210,6 +210,12 @@ const Modulos = () => {
         >
           Tributação PIS/COFINS
         </Button>
+        <Button
+          variant={moduloSelecionado === "pdf_xml" ? "default" : "outline"}
+          onClick={() => setModuloSelecionado("pdf_xml")}
+        >
+          Conversor de PDF para XML
+        </Button>
       </div>
       {moduloSelecionado === "ncm" && (
         <div className="bg-white rounded-lg shadow p-6 mb-6">
@@ -244,6 +250,15 @@ const Modulos = () => {
           <Button onClick={() => { setTela("processamento"); setOpcao("pis_cofins"); }}>Acessar módulo</Button>
         </div>
       )}
+      {moduloSelecionado === "pdf_xml" && (
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h3 className="text-2xl font-semibold mb-1">Conversor de PDF para XML</h3>
+          <p className="text-gray-600 mb-4">O Conversor de PDF para XML foi desenvolvido para facilitar o processo de escrituração de Notas Fiscais de Serviço (NFS-e) no seu sistema contábil.</p>
+          <p className="mb-4">Atualmente, diversas prefeituras emitem notas em formatos próprios, que não seguem o padrão ABRASF, dificultando a integração com softwares de gestão fiscal. Este conversor realiza a leitura dos arquivos em PDF e os transforma em XMLs compatíveis com o modelo ABRASF, amplamente aceito pelos sistemas contábeis do mercado.</p>
+          <p className="mb-4">Com isso, é possível automatizar a entrada de documentos fiscais, reduzir erros manuais e agilizar significativamente o processo de lançamento de notas.</p>
+          <Button disabled>Acessar módulo</Button>
+        </div>
+      )}
     </div>
   );
 
@@ -259,7 +274,7 @@ const Modulos = () => {
               ← Voltar para módulos disponíveis
             </Button>
             <h1 className="text-3xl font-bold mb-6 text-smartcont-700">
-              {opcao === 'ncm' ? 'Conferência de NCM' : 'Tributação PIS/COFINS'}
+              {opcao === 'ncm' ? 'Conferência de NCM' : opcao === 'pis_cofins' ? 'Tributação PIS/COFINS' : 'Conversor de PDF para XML'}
             </h1>
             <div className="flex flex-col gap-8 w-full">
               <div className="flex items-center gap-4">
