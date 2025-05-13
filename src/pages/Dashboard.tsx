@@ -75,7 +75,7 @@ const Dashboard = () => {
             </svg>
             Perfil
           </Link>
-          <a href="https://wa.me/556299311621" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
+          <a href="https://wa.me/62993111621" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
             <svg className="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -125,7 +125,7 @@ const Dashboard = () => {
                 <Link to="/modulos" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Módulos</Link>
                 <Link to="/dashboard/historico" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Histórico</Link>
                 <Link to="/dashboard/perfil" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Perfil</Link>
-                <a href="https://wa.me/556299311621" target="_blank" rel="noopener noreferrer" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Suporte</a>
+                <a href="https://wa.me/62993111621" target="_blank" rel="noopener noreferrer" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Suporte</a>
                 <Button variant="secondary" className="mt-4 w-full" onClick={() => {/* lógica de logout */ setMobileMenuOpen(false);}}>Sair</Button>
               </nav>
             </div>
