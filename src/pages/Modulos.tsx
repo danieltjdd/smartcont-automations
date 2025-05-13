@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import { Download, FileSpreadsheet, FileSearch, ShieldCheck, MapPin } from "lucide-react";
 import { env } from "@/config/env";
+import { toast } from "@/components/ui/use-toast";
 
 const PLANILHA_MODELO_URL = "/planilha-modelo.xlsx";
 const UFS = [
@@ -78,12 +79,12 @@ const PlanilhaPreview = () => (
 
 const Modulos = () => {
   const [arquivo, setArquivo] = useState<File | null>(null);
-  const [opcao, setOpcao] = useState<string | null>(null);
+  const [opcao, setOpcao] = useState<'ncm' | 'pis_cofins' | 'pdf_xml' | 'conferencia_produtos' | null>(null);
   const [processando, setProcessando] = useState(false);
   const [relatorioDisponivel, setRelatorioDisponivel] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [uf, setUf] = useState<string>("");
-  const [tela, setTela] = useState<'modulos' | 'processamento'>("modulos");
+  const [tela, setTela] = useState<'modulos' | 'processamento'>('modulos');
   const [moduloSelecionado, setModuloSelecionado] = useState<string | null>(null);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +105,11 @@ const Modulos = () => {
 
     if (!arquivo || !opcao) {
       console.error("[handleProcessar] ERRO: Arquivo ou opção não selecionados. Saindo.", { arquivo, opcao });
-      alert("Por favor, selecione um arquivo e uma opção de conferência antes de processar.");
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione um arquivo e uma opção de conferência antes de processar.",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -129,6 +134,8 @@ const Modulos = () => {
       endpoint = `${apiUrl}/processar-pis-cofins/`;
     } else if (opcao === "ncm") {
       endpoint = `${apiUrl}/processar-ncm/`;
+    } else if (opcao === "conferencia_produtos") {
+      endpoint = `${apiUrl}/conferencia-produtos/`;
     }
     
     console.log("[handleProcessar] Opção selecionada:", opcao);
@@ -136,7 +143,11 @@ const Modulos = () => {
 
     if (!endpoint || !apiUrl || (isProd && apiUrl.includes('localhost'))) {
       console.error("[handleProcessar] ERRO: Endpoint não pôde ser determinado ou URL da API inválida para o ambiente. Saindo.", { opcao, apiUrl, isProd, endpoint });
-      alert(`Erro ao determinar o endereço da API (${apiUrl}). Verifique as variáveis de ambiente (VITE_APP_ENV deve ser 'production', e VITE_API_URL_PRODUCTION deve ser a URL correta).`);
+      toast({
+        title: "Erro",
+        description: `Erro ao determinar o endereço da API (${apiUrl}). Verifique as variáveis de ambiente (VITE_APP_ENV deve ser 'production', e VITE_API_URL_PRODUCTION deve ser a URL correta).`,
+        variant: "destructive"
+      });
       setProcessando(false);
       return;
     }
@@ -174,19 +185,37 @@ const Modulos = () => {
         window.URL.revokeObjectURL(url);
         setRelatorioDisponivel(true);
         console.log("[handleProcessar] Download concluído e 'relatorioDisponivel' definido como true.");
+        
+        toast({
+          title: "Sucesso",
+          description: "Relatório gerado com sucesso!",
+          variant: "default"
+        });
       } else {
         const errorText = await response.text();
         console.error("[handleProcessar] ERRO na API - Status:", response.status, "Resposta:", errorText);
         try {
-            const errorData = JSON.parse(errorText);
-            alert(`Erro ao processar arquivo (${response.status}): ${errorData.erro || errorData.detail || response.statusText}`);
+          const errorData = JSON.parse(errorText);
+          toast({
+            title: "Erro",
+            description: `Erro ao processar arquivo (${response.status}): ${errorData.erro || errorData.detail || response.statusText}`,
+            variant: "destructive"
+          });
         } catch (e) {
-            alert(`Erro ao processar arquivo (${response.status}): ${response.statusText}. Detalhes: ${errorText.substring(0, 300)}`);
+          toast({
+            title: "Erro",
+            description: `Erro ao processar arquivo (${response.status}): ${response.statusText}. Detalhes: ${errorText.substring(0, 300)}`,
+            variant: "destructive"
+          });
         }
       }
     } catch (error) {
       console.error("[handleProcessar] ERRO CATCH na requisição:", error);
-      alert(`Erro crítico na requisição: ${error.message || error}`);
+      toast({
+        title: "Erro",
+        description: `Erro crítico na requisição: ${error.message || error}`,
+        variant: "destructive"
+      });
     } finally {
       setProcessando(false);
       console.log("[handleProcessar] Estado 'processando' definido como false. Finalizando handleProcessar.");
@@ -215,6 +244,12 @@ const Modulos = () => {
           onClick={() => setModuloSelecionado("pdf_xml")}
         >
           Conversor de PDF para XML
+        </Button>
+        <Button
+          variant={moduloSelecionado === "conferencia_produtos" ? "default" : "outline"}
+          onClick={() => setModuloSelecionado("conferencia_produtos")}
+        >
+          Conferência de Produtos
         </Button>
       </div>
       {moduloSelecionado === "ncm" && (
@@ -259,6 +294,60 @@ const Modulos = () => {
           <Button disabled>Acessar módulo</Button>
         </div>
       )}
+      {moduloSelecionado === "conferencia_produtos" && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-xl font-semibold mb-4">Conferência de Produtos para Escrituração</h3>
+          <p className="text-gray-600 mb-6">
+            A Conferência de Produtos para Escrituração foi criada pra te dar mais segurança e agilidade na análise de notas fiscais de entrada e saída da sua empresa.
+          </p>
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-smartcont-100 flex items-center justify-center text-smartcont-600 flex-shrink-0">
+                📥
+              </div>
+              <p className="text-gray-600">
+                Você insere o relatório de entradas (compras) e o relatório de saídas (vendas)
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-smartcont-100 flex items-center justify-center text-smartcont-600 flex-shrink-0">
+                🔎
+              </div>
+              <p className="text-gray-600">
+                O sistema cruza essas informações
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-smartcont-100 flex items-center justify-center text-smartcont-600 flex-shrink-0">
+                📄
+              </div>
+              <p className="text-gray-600">
+                E gera um relatório inteligente destacando os NCM que entraram, mas não saíram — ou seja, possíveis itens de uso e consumo, ativo imobilizado ou até mesmo estoque parado.
+              </p>
+            </div>
+          </div>
+          <div className="mt-8">
+            <h4 className="font-semibold mb-4">Isso te ajuda a:</h4>
+            <ul className="list-disc list-inside space-y-2 text-gray-600">
+              <li>Identificar produtos que não devem ser creditados indevidamente no fiscal</li>
+              <li>Classificar corretamente os itens de entrada</li>
+              <li>Evitar erros na apuração de tributos como ICMS e PIS/COFINS</li>
+              <li>E minimizando os erros com a realidade da operação</li>
+            </ul>
+          </div>
+          <div className="mt-8">
+            <Button 
+              className="w-full"
+              onClick={() => {
+                setOpcao('conferencia_produtos');
+                setTela('processamento');
+              }}
+            >
+              Iniciar Conferência
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -274,7 +363,10 @@ const Modulos = () => {
               ← Voltar para módulos disponíveis
             </Button>
             <h1 className="text-3xl font-bold mb-6 text-smartcont-700">
-              {opcao === 'ncm' ? 'Conferência de NCM' : opcao === 'pis_cofins' ? 'Tributação PIS/COFINS' : 'Conversor de PDF para XML'}
+              {opcao === 'ncm' ? 'Conferência de NCM' : 
+               opcao === 'pis_cofins' ? 'Tributação PIS/COFINS' : 
+               opcao === 'conferencia_produtos' ? 'Conferência de Produtos para Escrituração' :
+               'Conversor de PDF para XML'}
             </h1>
             <div className="flex flex-col gap-8 w-full">
               <div className="flex items-center gap-4">

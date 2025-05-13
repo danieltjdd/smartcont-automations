@@ -10,7 +10,7 @@ import { Menu, X } from "lucide-react";
 const Dashboard = () => {
   const { toast } = useToast();
   const [activeModule, setActiveModule] = useState<string | null>(null);
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (loading) {
@@ -83,7 +83,7 @@ const Dashboard = () => {
           </a>
         </nav>
         <div className="p-4 border-t border-smartcont-500">
-          <Button variant="secondary" className="w-full bg-smartcont-500 text-white hover:bg-smartcont-400">
+          <Button variant="secondary" className="w-full bg-smartcont-500 text-white hover:bg-smartcont-400" onClick={logout}>
             Sair
           </Button>
         </div>
@@ -126,7 +126,7 @@ const Dashboard = () => {
                 <Link to="/dashboard/historico" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Histórico</Link>
                 <Link to="/dashboard/perfil" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Perfil</Link>
                 <a href="https://wa.me/62993111621" target="_blank" rel="noopener noreferrer" className="py-2 px-2 rounded hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>Suporte</a>
-                <Button variant="secondary" className="mt-4 w-full" onClick={() => {/* lógica de logout */ setMobileMenuOpen(false);}}>Sair</Button>
+                <Button variant="secondary" className="mt-4 w-full" onClick={() => { logout(); setMobileMenuOpen(false);}}>Sair</Button>
               </nav>
             </div>
             <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
