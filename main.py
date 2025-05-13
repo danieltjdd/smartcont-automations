@@ -4,6 +4,8 @@ import re
 from datetime import datetime
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from fastapi.responses import JSONResponse
 
 app = FastAPI(
     docs_url="/docs",
@@ -117,4 +119,61 @@ async def processar(usuario: UploadFile = File(...)):
 
 @app.get("/")
 def health():
-    return {"status": "ok"} 
+    return {"status": "ok"}
+
+# --- Endpoint Conferência de Escrituração ---
+@app.post("/processar-escrituracao/")
+async def processar_escrituracao(entrada: UploadFile = File(...), saida: UploadFile = File(...)):
+    try:
+        # Salva arquivos temporários
+        entrada_path = f"/tmp/{entrada.filename}"
+        saida_path = f"/tmp/{saida.filename}"
+        with open(entrada_path, "wb") as f:
+            f.write(await entrada.read())
+        with open(saida_path, "wb") as f:
+            f.write(await saida.read())
+
+        # Lê as planilhas
+        df_entrada = pd.read_excel(entrada_path)
+        df_saida = pd.read_excel(saida_path)
+
+        # Remove duplicatas da base de saída
+        ncm_saida_unicos = df_saida['NCM'].dropna().unique()
+
+        # Processa cada linha da entrada
+        resultados = []
+        for _, row in df_entrada.iterrows():
+            ncm = row['NCM']
+            cfop = row['CFOP']
+            fornecedor = row['Fornecedor']
+            if pd.isna(ncm) or ncm == '':
+                observacao = "NCM não informado"
+            elif ncm in ncm_saida_unicos:
+                observacao = "NCM também presente nas notas de saída"
+            else:
+                observacao = "NCM ausente nas notas de saída"
+            resultados.append({
+                'CFOP': cfop,
+                'NCM': ncm,
+                'Fornecedor': fornecedor,
+                'Observação': observacao
+            })
+
+        df_resultado = pd.DataFrame(resultados)
+        ausentes = df_resultado[df_resultado['Observação'] == 'NCM ausente nas notas de saída']
+        resumo = ausentes[['NCM']].drop_duplicates().reset_index(drop=True)
+
+        # Gera o relatório Excel
+        now = datetime.now().strftime("%Y%m%d_%H%M%S")
+        nome_arquivo = f"/tmp/relatorio_escrituracao_{now}.xlsx"
+        with pd.ExcelWriter(nome_arquivo, engine="openpyxl") as writer:
+            df_resultado.to_excel(writer, index=False, sheet_name="Confronto Completo")
+            resumo.to_excel(writer, index=False, sheet_name="Resumo NCMs Ausentes")
+
+        # Remove arquivos temporários
+        os.remove(entrada_path)
+        os.remove(saida_path)
+
+        return FileResponse(nome_arquivo, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename=nome_arquivo.split('/')[-1])
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"erro": str(e)}) 
