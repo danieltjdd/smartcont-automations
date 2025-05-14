@@ -81,8 +81,15 @@ const Conferencia = () => {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <main className="flex-grow py-10 px-4 max-w-2xl mx-auto w-full">
-        <h1 className="text-3xl font-bold mb-8 text-smartcont-700">Conferência de NCM</h1>
-        
+        <h1 className="text-3xl font-bold mb-8 text-smartcont-700">Conferência de Produtos para Escrituração</h1>
+        <div className="flex gap-4 mb-6">
+          <a href="/Conferencia%20Escrituração/Notas%20de%20Entrada%20-%20Movimento%20do%20Produto%20-%20G%2004.xlsx" download>
+            <Button type="button" variant="outline">Baixar Modelo Entrada</Button>
+          </a>
+          <a href="/Conferencia%20Escrituração/Relação%20de%20saídas%20-%20NFC%20-%20CFE%20-%20G%2003.xlsx" download>
+            <Button type="button" variant="outline">Baixar Modelo Saída</Button>
+          </a>
+        </div>
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
@@ -97,10 +104,9 @@ const Conferencia = () => {
                   className="w-full"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Selecione o arquivo de notas de entrada
+                  Selecione o arquivo de notas de entrada (use o modelo se necessário)
                 </p>
               </div>
-
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Planilha de Saída
@@ -112,11 +118,10 @@ const Conferencia = () => {
                   className="w-full"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Selecione o arquivo de notas de saída
+                  Selecione o arquivo de notas de saída (use o modelo se necessário)
                 </p>
               </div>
             </div>
-
             <Button
               type="submit"
               className="w-full"
