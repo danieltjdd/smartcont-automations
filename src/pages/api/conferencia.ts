@@ -27,8 +27,11 @@ export default async function handler(
       });
     });
 
-    const entradaFile = files.entrada as formidable.File;
-    const saidaFile = files.saida as formidable.File;
+    // Corrige para aceitar array ou único arquivo
+    const entradaFileRaw = files.entrada;
+    const saidaFileRaw = files.saida;
+    const entradaFile = Array.isArray(entradaFileRaw) ? entradaFileRaw[0] : entradaFileRaw;
+    const saidaFile = Array.isArray(saidaFileRaw) ? saidaFileRaw[0] : saidaFileRaw;
 
     if (!entradaFile || !saidaFile) {
       return res.status(400).json({ error: 'Arquivos não fornecidos' });
