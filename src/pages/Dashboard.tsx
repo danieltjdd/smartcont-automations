@@ -212,8 +212,8 @@ const Dashboard = () => {
                   <div className="flex justify-end">
                     <a href="/modulos">
                       <Button>
-                        Acessar módulo
-                      </Button>
+                      Acessar módulo
+                    </Button>
                     </a>
                   </div>
                 </CardContent>

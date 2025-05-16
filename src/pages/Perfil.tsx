@@ -19,11 +19,10 @@ const Perfil = () => {
   });
   const [editando, setEditando] = useState(false);
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
-  const [formOriginal, setFormOriginal] = useState(form); // Para restaurar ao cancelar
+  const [formOriginal, setFormOriginal] = useState(form);
 
   useEffect(() => {
     if (user) {
-      // Gera avatar baseado no email do usuário
       const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || '')}&background=4F46E5&color=fff&size=128`;
       const novoForm = {
         avatar: user.photoURL || avatarUrl,
@@ -58,7 +57,6 @@ const Perfil = () => {
     if (!user) return;
 
     try {
-      // Atualiza o perfil no Firebase
       await updateProfile(user, {
         displayName: `${form.nome} ${form.sobrenome}`.trim(),
         photoURL: previewAvatar || form.avatar
@@ -83,12 +81,12 @@ const Perfil = () => {
   };
 
   const handleEdit = () => {
-    setFormOriginal(form); // Salva estado original para cancelar
+    setFormOriginal(form);
     setEditando(true);
   };
 
   const handleCancel = () => {
-    setForm(formOriginal); // Restaura estado original
+    setForm(formOriginal);
     setEditando(false);
     setPreviewAvatar(null);
   };

@@ -1,3 +1,67 @@
+# Suna - Plataforma de Análise de Dados
+
+Suna é uma plataforma moderna para análise de dados, construída com React, Next.js e Firebase.
+
+## 🚀 Tecnologias
+
+- React
+- Next.js
+- TypeScript
+- Firebase (Autenticação)
+- Tailwind CSS
+- Radix UI
+
+## 📋 Pré-requisitos
+
+- Node.js 18.x ou superior
+- npm ou yarn
+- Conta no Firebase
+
+## 🔧 Instalação
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/seu-usuario/suna.git
+cd suna
+```
+
+2. Instale as dependências:
+```bash
+npm install
+# ou
+yarn install
+```
+
+3. Configure as variáveis de ambiente:
+Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=sua_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=seu_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=seu_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=seu_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=seu_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=seu_app_id
+```
+
+4. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+# ou
+yarn dev
+```
+
+## 🌟 Funcionalidades
+
+- Autenticação com Firebase
+- Gerenciamento de perfil de usuário
+- Interface moderna e responsiva
+- Componentes reutilizáveis
+- Temas claro/escuro
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
 # Welcome to your Lovable project
 
 ## Project info

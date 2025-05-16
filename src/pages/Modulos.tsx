@@ -79,7 +79,7 @@ const PlanilhaPreview = () => (
 
 const Modulos = () => {
   const [arquivo, setArquivo] = useState<File | null>(null);
-  const [opcao, setOpcao] = useState<'ncm' | 'pis_cofins' | 'pdf_xml' | 'conferencia_produtos' | null>(null);
+  const [opcao, setOpcao] = useState<'ncm' | 'pis_cofins' | 'pdf_xml' | 'conferencia_produtos' | 'produto_st' | null>(null);
   const [processando, setProcessando] = useState(false);
   const [relatorioDisponivel, setRelatorioDisponivel] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -195,7 +195,7 @@ const Modulos = () => {
         const errorText = await response.text();
         console.error("[handleProcessar] ERRO na API - Status:", response.status, "Resposta:", errorText);
         try {
-          const errorData = JSON.parse(errorText);
+            const errorData = JSON.parse(errorText);
           toast({
             title: "Erro",
             description: `Erro ao processar arquivo (${response.status}): ${errorData.erro || errorData.detail || response.statusText}`,
