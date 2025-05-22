@@ -1,5 +1,9 @@
 import { auth } from '@/lib/firebase';
 
+interface FileUploadHandlerProps {
+  onUpload: (file: File) => void;
+}
+
 export function FileUploadHandler({ onUpload }: FileUploadHandlerProps) {
   const user = auth.currentUser;
   if (!user) {
