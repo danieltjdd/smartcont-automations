@@ -10,5 +10,6 @@ export function FileUploadHandler({ onUpload }: FileUploadHandlerProps) {
     throw new Error('Usuário não autenticado');
   }
 
-  // ... rest of the component code ...
+  // Implementação mínima para não quebrar o build
+  return null;
 } 
