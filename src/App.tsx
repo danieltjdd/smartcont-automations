@@ -8,7 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 
 const queryClient = new QueryClient();
 
-export function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
