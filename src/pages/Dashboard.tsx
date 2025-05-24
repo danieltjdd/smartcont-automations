@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from '@/contexts/AuthContext';
 import { Menu, X } from "lucide-react";
 
 const Dashboard = () => {
   const { toast } = useToast();
   const [activeModule, setActiveModule] = useState<string | null>(null);
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout } = useAuthContext();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (loading) {
