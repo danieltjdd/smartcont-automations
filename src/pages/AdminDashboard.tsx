@@ -1,14 +1,15 @@
-
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 const AdminDashboard = () => {
+  const router = useRouter();
   const { toast } = useToast();
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
@@ -158,7 +159,7 @@ const AdminDashboard = () => {
       {/* Sidebar */}
       <div className="hidden md:flex w-64 flex-col fixed inset-y-0 bg-smartcont-600 text-white">
         <div className="flex items-center h-16 px-6 border-b border-smartcont-500">
-          <Link to="/admin" className="flex items-center space-x-2">
+          <Link href="/admin" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-white rounded-md flex items-center justify-center text-smartcont-600 font-bold text-base">
               SC
             </div>
@@ -174,31 +175,31 @@ const AdminDashboard = () => {
               Administração
             </p>
           </div>
-          <Link to="/admin" className="flex items-center px-6 py-2.5 text-white bg-smartcont-500">
+          <Link href="/admin" className="flex items-center px-6 py-2.5 text-white bg-smartcont-500">
             <svg className="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             Dashboard
           </Link>
-          <Link to="/admin/usuarios" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
+          <Link href="/admin/usuarios" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
             <svg className="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
             Usuários
           </Link>
-          <Link to="/admin/modulos" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
+          <Link href="/admin/modulos" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
             <svg className="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
             Módulos
           </Link>
-          <Link to="/admin/logs" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
+          <Link href="/admin/logs" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
             <svg className="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             Logs de atividade
           </Link>
-          <Link to="/admin/site" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
+          <Link href="/admin/site" className="flex items-center px-6 py-2.5 text-smartcont-100 hover:bg-smartcont-500 hover:text-white">
             <svg className="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
