@@ -1,74 +1,92 @@
 import pandas from 'pandas-js';
 import ExcelJS from 'exceljs';
 
+interface ResultadoConferencia {
+  CFOP: string;
+  NCM: string;
+  Fornecedor: string;
+  Observação: string;
+}
+
 export async function processarConferencia(
-  entradaPath: string,
-  saidaPath: string
-): Promise<Buffer> {
+  arquivo: string,
+  tipo: 'ncm' | 'pis-cofins' | 'escrituracao'
+): Promise<ResultadoConferencia[]> {
   try {
-    // Lê as planilhas
-    const df_entrada = await pandas.read_excel(entradaPath);
-    const df_saida = await pandas.read_excel(saidaPath);
+    // Lê o arquivo Excel
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(arquivo);
+    const worksheet = workbook.getWorksheet(1);
 
-    // Remove duplicatas da base de saída
-    const ncm_saida_unicos = df_saida['NCM'].dropna().unique();
+    // Converte para DataFrame
+    const data = worksheet.getRows()?.map(row => ({
+      CFOP: row.getCell(1).value,
+      NCM: row.getCell(2).value,
+      Fornecedor: row.getCell(3).value,
+      Observação: row.getCell(4).value
+    })) || [];
 
-    // Cria lista para armazenar resultados
-    const resultados = [];
+    const df = new pandas.DataFrame(data);
 
-    // Processa cada linha da entrada
-    for (const row of df_entrada.iterrows()) {
-      const ncm = row['NCM'];
-      const cfop = row['CFOP'];
-      const fornecedor = row['Fornecedor'];
+    // Processa de acordo com o tipo
+    const resultados: ResultadoConferencia[] = [];
 
-      // Define a observação baseada nas regras
-      let observacao;
-      if (!ncm || ncm === '') {
-        observacao = "NCM não informado";
-      } else if (ncm_saida_unicos.includes(ncm)) {
-        observacao = "NCM também presente nas notas de saída";
-      } else {
-        observacao = "NCM ausente nas notas de saída";
+    if (tipo === 'ncm') {
+      // Lógica para conferência de NCM
+      for (let i = 0; i < df.length; i++) {
+        const cfop = df.get('CFOP', i);
+        const ncm = df.get('NCM', i);
+        const fornecedor = df.get('Fornecedor', i);
+
+        // Aqui você pode adicionar sua lógica de validação
+        if (!ncm || ncm.length !== 8) {
+          resultados.push({
+            CFOP: cfop,
+            NCM: ncm,
+            Fornecedor: fornecedor,
+            Observação: 'NCM inválido'
+          });
+        }
       }
+    } else if (tipo === 'pis-cofins') {
+      // Lógica para conferência de PIS/COFINS
+      for (let i = 0; i < df.length; i++) {
+        const cfop = df.get('CFOP', i);
+        const ncm = df.get('NCM', i);
+        const fornecedor = df.get('Fornecedor', i);
 
-      resultados.push({
-        CFOP: cfop,
-        NCM: ncm,
-        Fornecedor: fornecedor,
-        Observação: observacao
-      });
+        // Aqui você pode adicionar sua lógica de validação
+        if (cfop && cfop.toString().startsWith('5')) {
+          resultados.push({
+            CFOP: cfop,
+            NCM: ncm,
+            Fornecedor: fornecedor,
+            Observação: 'Operação com PIS/COFINS'
+          });
+        }
+      }
+    } else if (tipo === 'escrituracao') {
+      // Lógica para conferência de escrituração
+      for (let i = 0; i < df.length; i++) {
+        const cfop = df.get('CFOP', i);
+        const ncm = df.get('NCM', i);
+        const fornecedor = df.get('Fornecedor', i);
+
+        // Aqui você pode adicionar sua lógica de validação
+        if (!cfop) {
+          resultados.push({
+            CFOP: cfop,
+            NCM: ncm,
+            Fornecedor: fornecedor,
+            Observação: 'CFOP não informado'
+          });
+        }
+      }
     }
 
-    // Gera resumo dos NCMs ausentes
-    const ausentes = resultados.filter(r => r['Observação'] === 'NCM ausente nas notas de saída');
-    const resumo = [...new Set(ausentes.map(r => r['NCM']))].map(ncm => ({ NCM: ncm }));
-
-    // Cria o arquivo Excel
-    const workbook = new ExcelJS.Workbook();
-    
-    // Adiciona a aba de confronto completo
-    const sheet1 = workbook.addWorksheet('Confronto Completo');
-    sheet1.columns = [
-      { header: 'CFOP', key: 'CFOP' },
-      { header: 'NCM', key: 'NCM' },
-      { header: 'Fornecedor', key: 'Fornecedor' },
-      { header: 'Observação', key: 'Observação' }
-    ];
-    sheet1.addRows(resultados);
-
-    // Adiciona a aba de resumo
-    const sheet2 = workbook.addWorksheet('Resumo NCMs Ausentes');
-    sheet2.columns = [
-      { header: 'NCM', key: 'NCM' }
-    ];
-    sheet2.addRows(resumo);
-
-    // Gera o buffer do arquivo
-    const buffer = await workbook.xlsx.writeBuffer();
-    return Buffer.from(buffer);
+    return resultados;
   } catch (error) {
     console.error('Erro ao processar conferência:', error);
-    throw new Error('Erro ao processar conferência');
+    throw error;
   }
 } 
