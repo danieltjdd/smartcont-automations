@@ -2,6 +2,10 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CheckCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const Solucoes = () => {
   return (
@@ -48,6 +52,59 @@ const Solucoes = () => {
             <a href="https://wa.me/5562993111621" target="_blank" rel="noopener noreferrer">
               <button className="btn-primary bg-white text-smartcont-600 px-6 py-2 rounded font-semibold shadow hover:bg-smartcont-50 transition">Iniciar Conversa no WhatsApp</button>
             </a>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Automação Fiscal</CardTitle>
+                <CardDescription>
+                  Automatize processos fiscais e reduza erros
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/solucoes/automacao-fiscal">
+                  <Button className="w-full">
+                    Saiba mais
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Conferência Contábil</CardTitle>
+                <CardDescription>
+                  Verifique a consistência dos lançamentos contábeis
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/solucoes/conferencia-contabil">
+                  <Button className="w-full">
+                    Saiba mais
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestão de Documentos</CardTitle>
+                <CardDescription>
+                  Organize e gerencie seus documentos fiscais
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/solucoes/gestao-documentos">
+                  <Button className="w-full">
+                    Saiba mais
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>

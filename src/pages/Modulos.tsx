@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
-import { Download, FileSpreadsheet, FileSearch, ShieldCheck, MapPin } from "lucide-react";
+import { Download, FileSpreadsheet, FileSearch, ShieldCheck, MapPin, ArrowRight } from "lucide-react";
 import { env } from "@/config/env";
 import { toast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 const PLANILHA_MODELO_URL = "/planilha-modelo.xlsx";
 const UFS = [
@@ -224,130 +226,66 @@ const Modulos = () => {
 
   // Renderiza a tela de módulos disponíveis
   const renderModulosDisponiveis = () => (
-    <div className="w-full">
-      <h2 className="text-2xl font-bold mb-6">Módulos disponíveis</h2>
-      <div className="flex gap-4 mb-6">
-        <Button
-          variant={moduloSelecionado === "ncm" ? "default" : "outline"}
-          onClick={() => setModuloSelecionado("ncm")}
-        >
-          Conferência de NCM
-        </Button>
-        <Button
-          variant={moduloSelecionado === "pis_cofins" ? "default" : "outline"}
-          onClick={() => setModuloSelecionado("pis_cofins")}
-        >
-          Tributação PIS/COFINS
-        </Button>
-        <Button
-          variant={moduloSelecionado === "pdf_xml" ? "default" : "outline"}
-          onClick={() => setModuloSelecionado("pdf_xml")}
-        >
-          Conversor de PDF para XML
-        </Button>
-        <Button
-          variant={moduloSelecionado === "conferencia_produtos" ? "default" : "outline"}
-          onClick={() => setModuloSelecionado("conferencia_produtos")}
-        >
-          Conferência de Produtos
-        </Button>
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">Módulos</h1>
+        <p className="text-xl text-muted-foreground">
+          Escolha o módulo que deseja utilizar
+        </p>
       </div>
-      {moduloSelecionado === "ncm" && (
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-2xl font-semibold mb-1">Conferência de NCM</h3>
-          <p className="text-gray-600 mb-4">Verifique automaticamente a classificação fiscal dos produtos com base nas descrições.</p>
-          <p className="mb-4">Este módulo analisa a descrição dos produtos e sugere a classificação NCM correta, identificando possíveis inconsistências nos cadastros atuais.</p>
-          <div className="bg-gray-50 rounded p-4 mb-4">
-            <b>Como funciona:</b>
-            <ol className="list-decimal pl-5 mt-2">
-              <li>Faça upload de um arquivo com a lista de produtos.</li>
-              <li>O sistema processará automaticamente cada item.</li>
-              <li>Receba um relatório completo com sugestões e inconsistências.</li>
-              <li>Exporte os resultados em Excel ou PDF.</li>
-            </ol>
-          </div>
-          <Button onClick={() => { setTela("processamento"); setOpcao("ncm"); }}>Acessar módulo</Button>
-        </div>
-      )}
-      {moduloSelecionado === "pis_cofins" && (
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-2xl font-semibold mb-1">Tributação PIS/COFINS</h3>
-          <p className="text-gray-600 mb-4">Gere uma planilha com os CST de PIS e COFINS, auxiliando na conferência tributária dos produtos.</p>
-          <div className="bg-gray-50 rounded p-4 mb-4">
-            <b>Como funciona:</b>
-            <ol className="list-decimal pl-5 mt-2">
-              <li>Faça upload de um arquivo com os dados fiscais.</li>
-              <li>O sistema verificará automaticamente as alíquotas e bases de cálculo.</li>
-              <li>Receba um diagnóstico completo com inconsistências e recomendações.</li>
-              <li>Exporte um relatório detalhado para compartilhar com o cliente.</li>
-            </ol>
-          </div>
-          <Button onClick={() => { setTela("processamento"); setOpcao("pis_cofins"); }}>Acessar módulo</Button>
-        </div>
-      )}
-      {moduloSelecionado === "pdf_xml" && (
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-2xl font-semibold mb-1">Conversor de PDF para XML</h3>
-          <p className="text-gray-600 mb-4">O Conversor de PDF para XML foi desenvolvido para facilitar o processo de escrituração de Notas Fiscais de Serviço (NFS-e) no seu sistema contábil.</p>
-          <p className="mb-4">Atualmente, diversas prefeituras emitem notas em formatos próprios, que não seguem o padrão ABRASF, dificultando a integração com softwares de gestão fiscal. Este conversor realiza a leitura dos arquivos em PDF e os transforma em XMLs compatíveis com o modelo ABRASF, amplamente aceito pelos sistemas contábeis do mercado.</p>
-          <p className="mb-4">Com isso, é possível automatizar a entrada de documentos fiscais, reduzir erros manuais e agilizar significativamente o processo de lançamento de notas.</p>
-          <Button disabled>Acessar módulo</Button>
-        </div>
-      )}
-      {moduloSelecionado === "conferencia_produtos" && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-semibold mb-4">Conferência de Produtos para Escrituração</h3>
-          <p className="text-gray-600 mb-6">
-            A Conferência de Produtos para Escrituração foi criada pra te dar mais segurança e agilidade na análise de notas fiscais de entrada e saída da sua empresa.
-          </p>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-smartcont-100 flex items-center justify-center text-smartcont-600 flex-shrink-0">
-                📥
-              </div>
-              <p className="text-gray-600">
-                Você insere o relatório de entradas (compras) e o relatório de saídas (vendas)
-              </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-smartcont-100 flex items-center justify-center text-smartcont-600 flex-shrink-0">
-                🔎
-              </div>
-              <p className="text-gray-600">
-                O sistema cruza essas informações
-              </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-smartcont-100 flex items-center justify-center text-smartcont-600 flex-shrink-0">
-                📄
-              </div>
-              <p className="text-gray-600">
-                E gera um relatório inteligente destacando os NCM que entraram, mas não saíram — ou seja, possíveis itens de uso e consumo, ativo imobilizado ou até mesmo estoque parado.
-              </p>
-            </div>
-          </div>
-          <div className="mt-8">
-            <h4 className="font-semibold mb-4">Isso te ajuda a:</h4>
-            <ul className="list-disc list-inside space-y-2 text-gray-600">
-              <li>Identificar produtos que não devem ser creditados indevidamente no fiscal</li>
-              <li>Classificar corretamente os itens de entrada</li>
-              <li>Evitar erros na apuração de tributos como ICMS e PIS/COFINS</li>
-              <li>E minimizando os erros com a realidade da operação</li>
-            </ul>
-          </div>
-          <div className="mt-8">
-            <Button 
-              className="w-full"
-              onClick={() => {
-                setOpcao('conferencia_produtos');
-                setTela('processamento');
-              }}
-            >
-              Iniciar Conferência
-            </Button>
-          </div>
-        </div>
-      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Conferência de NCM</CardTitle>
+            <CardDescription>
+              Verifique a consistência dos códigos NCM em suas notas fiscais
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/modulos/conferencia-ncm">
+              <Button className="w-full">
+                Acessar
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Conferência de PIS/COFINS</CardTitle>
+            <CardDescription>
+              Analise as operações com PIS/COFINS em suas notas fiscais
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/modulos/conferencia-pis-cofins">
+              <Button className="w-full">
+                Acessar
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Conferência de Escrituração</CardTitle>
+            <CardDescription>
+              Verifique a consistência da escrituração contábil
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/modulos/conferencia-escrituracao">
+              <Button className="w-full">
+                Acessar
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 
