@@ -37,7 +37,7 @@ export function ManageTeamMembers({ teamId }: { teamId: string }) {
 
   return (
     <div>
-      {members?.map((member) => (
+      {members?.map((member: { id: string; name: string; role: string }) => (
         <div key={member.id}>
           <h3>{member.name}</h3>
           <p>{member.role}</p>

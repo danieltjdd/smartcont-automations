@@ -13,7 +13,7 @@ export function ManageTeams() {
 
   return (
     <div>
-      {accounts?.map((account) => (
+      {accounts?.map((account: { id: string; name: string; type: string }) => (
         <div key={account.id}>
           <h3>{account.name}</h3>
           {/* Adicione mais informações da equipe conforme necessário */}

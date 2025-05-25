@@ -1,11 +1,6 @@
 import { auth } from '@/lib/firebase';
 
-interface FileViewerModalProps {
-  file: any;
-  onClose: () => void;
-}
-
-export function FileViewerModal({ file, onClose }: FileViewerModalProps) {
+export function FileViewerModal() {
   const user = auth.currentUser;
   if (!user) {
     throw new Error('Usuário não autenticado');

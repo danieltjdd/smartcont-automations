@@ -1,16 +1,25 @@
-import { auth } from '@/lib/firebase';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
-export function NavUserWithTeams() {
-  const { logout } = useAuthContext();
+export default function NavUserWithTeams() {
+  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
-  };
-
-  // ... rest of the component code ...
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Equipes</CardTitle>
+          <CardDescription>
+            Gerencie suas equipes
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={() => navigate("/teams")} className="w-full">
+            Gerenciar Equipes
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
 } 

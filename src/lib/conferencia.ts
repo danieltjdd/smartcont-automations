@@ -1,3 +1,5 @@
+declare module 'pandas-js';
+
 import pandas from 'pandas-js';
 import ExcelJS from 'exceljs';
 

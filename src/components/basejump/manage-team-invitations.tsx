@@ -37,7 +37,7 @@ export function ManageTeamInvitations({ teamId }: { teamId: string }) {
 
   return (
     <div>
-      {invitations?.map((invitation) => (
+      {invitations?.map((invitation: { id: string; email: string; status: string }) => (
         <div key={invitation.id}>
           <h3>{invitation.email}</h3>
           <p>{invitation.status}</p>
