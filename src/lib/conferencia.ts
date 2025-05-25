@@ -20,10 +20,10 @@ export async function processarConferencia(
 
     // Converte para DataFrame
     const data = worksheet.getRows()?.map(row => ({
-      CFOP: row.getCell(1).value,
-      NCM: row.getCell(2).value,
-      Fornecedor: row.getCell(3).value,
-      Observação: row.getCell(4).value
+      CFOP: String(row.getCell(1).value || ''),
+      NCM: String(row.getCell(2).value || ''),
+      Fornecedor: String(row.getCell(3).value || ''),
+      Observação: String(row.getCell(4).value || '')
     })) || [];
 
     const df = new pandas.DataFrame(data);
@@ -34,9 +34,9 @@ export async function processarConferencia(
     if (tipo === 'ncm') {
       // Lógica para conferência de NCM
       for (let i = 0; i < df.length; i++) {
-        const cfop = df.get('CFOP', i);
-        const ncm = df.get('NCM', i);
-        const fornecedor = df.get('Fornecedor', i);
+        const cfop = String(df.get('CFOP', i) || '');
+        const ncm = String(df.get('NCM', i) || '');
+        const fornecedor = String(df.get('Fornecedor', i) || '');
 
         // Aqui você pode adicionar sua lógica de validação
         if (!ncm || ncm.length !== 8) {
@@ -51,12 +51,12 @@ export async function processarConferencia(
     } else if (tipo === 'pis-cofins') {
       // Lógica para conferência de PIS/COFINS
       for (let i = 0; i < df.length; i++) {
-        const cfop = df.get('CFOP', i);
-        const ncm = df.get('NCM', i);
-        const fornecedor = df.get('Fornecedor', i);
+        const cfop = String(df.get('CFOP', i) || '');
+        const ncm = String(df.get('NCM', i) || '');
+        const fornecedor = String(df.get('Fornecedor', i) || '');
 
         // Aqui você pode adicionar sua lógica de validação
-        if (cfop && cfop.toString().startsWith('5')) {
+        if (cfop && cfop.startsWith('5')) {
           resultados.push({
             CFOP: cfop,
             NCM: ncm,
@@ -68,9 +68,9 @@ export async function processarConferencia(
     } else if (tipo === 'escrituracao') {
       // Lógica para conferência de escrituração
       for (let i = 0; i < df.length; i++) {
-        const cfop = df.get('CFOP', i);
-        const ncm = df.get('NCM', i);
-        const fornecedor = df.get('Fornecedor', i);
+        const cfop = String(df.get('CFOP', i) || '');
+        const ncm = String(df.get('NCM', i) || '');
+        const fornecedor = String(df.get('Fornecedor', i) || '');
 
         // Aqui você pode adicionar sua lógica de validação
         if (!cfop) {
