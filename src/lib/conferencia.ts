@@ -18,13 +18,22 @@ export async function processarConferencia(
     await workbook.xlsx.readFile(arquivo);
     const worksheet = workbook.getWorksheet(1);
 
+    if (!worksheet) {
+      throw new Error('Planilha não encontrada no arquivo Excel');
+    }
+
     // Converte para DataFrame
-    const data = worksheet.getRows()?.map(row => ({
+    const rows = worksheet.getRows();
+    if (!rows || rows.length === 0) {
+      throw new Error('Nenhuma linha encontrada na planilha');
+    }
+
+    const data = rows.map(row => ({
       CFOP: String(row.getCell(1).value || ''),
       NCM: String(row.getCell(2).value || ''),
       Fornecedor: String(row.getCell(3).value || ''),
       Observação: String(row.getCell(4).value || '')
-    })) || [];
+    }));
 
     const df = new pandas.DataFrame(data);
 
