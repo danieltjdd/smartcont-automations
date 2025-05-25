@@ -23,7 +23,7 @@ export async function processarConferencia(
     }
 
     // Converte para DataFrame
-    const rows = worksheet.getRows();
+    const rows = worksheet.getRows(1, worksheet.rowCount);
     if (!rows || rows.length === 0) {
       throw new Error('Nenhuma linha encontrada na planilha');
     }
