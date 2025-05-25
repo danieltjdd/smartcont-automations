@@ -14,7 +14,8 @@ function checkImports() {
     'src/pages/Home.tsx',
     'src/pages/Modulos.tsx',
     'src/pages/Solucoes.tsx',
-    'src/pages/NotFound.tsx'
+    'src/pages/NotFound.tsx',
+    'src/pages/Conferencia.tsx'
   ];
 
   files.forEach(file => {
@@ -36,10 +37,49 @@ function checkTypeScript() {
   }
 }
 
+// Verifica se há erros de ESLint
+function checkLint() {
+  console.log('\n🔍 Verificando ESLint...');
+  try {
+    execSync('npm run lint', { stdio: 'inherit' });
+    console.log('✅ ESLint sem erros');
+  } catch (error) {
+    throw new Error('❌ Erros encontrados no ESLint');
+  }
+}
+
+// Verifica se há erros de React
+function checkReact() {
+  console.log('\n⚛️  Verificando React...');
+  try {
+    // Verifica se todos os componentes estão usando React corretamente
+    const pagesDir = path.join(process.cwd(), 'src', 'pages');
+    const files = fs.readdirSync(pagesDir);
+    
+    files.forEach(file => {
+      if (file.endsWith('.tsx')) {
+        const content = fs.readFileSync(path.join(pagesDir, file), 'utf8');
+        if (!content.includes('import React') && !content.includes('import { useState }')) {
+          console.warn(`⚠️  Aviso: ${file} pode não estar importando React corretamente`);
+        }
+      }
+    });
+    
+    console.log('✅ React sem erros');
+  } catch (error) {
+    throw new Error(`❌ Erro ao verificar React: ${error.message}`);
+  }
+}
+
 // Tenta fazer um build local
 function checkBuild() {
   console.log('\n🏗️  Testando build local...');
   try {
+    // Limpa a pasta .next antes do build
+    if (fs.existsSync('.next')) {
+      fs.rmSync('.next', { recursive: true, force: true });
+    }
+    
     execSync('npm run build', { stdio: 'inherit' });
     console.log('✅ Build local bem sucedido');
   } catch (error) {
@@ -67,6 +107,8 @@ function checkGitStatus() {
 try {
   checkImports();
   checkTypeScript();
+  checkLint();
+  checkReact();
   checkBuild();
   checkGitStatus();
   

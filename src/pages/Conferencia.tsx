@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
 
-const Conferencia = () => {
+export default function Conferencia() {
   const [entradaFile, setEntradaFile] = useState<File | null>(null);
   const [saidaFile, setSaidaFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -135,6 +135,4 @@ const Conferencia = () => {
       <Footer />
     </div>
   );
-};
-
-export default Conferencia; 
+} 
