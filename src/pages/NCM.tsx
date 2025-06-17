@@ -59,7 +59,7 @@ const NCM = () => {
     setStatus("Enviando arquivo...");
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("usuario", file);
     formData.append("user_id", (user && user.uid) ? user.uid : "anonimo");
 
     const response = await fetch("https://api-smartcont.onrender.com/ncm/enfileirar", {
